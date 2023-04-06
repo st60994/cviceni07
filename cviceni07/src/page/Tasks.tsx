@@ -1,36 +1,33 @@
 import TaskCard from "../component/TaskCard";
 import {Task, tasks} from "../data/init-data";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {Grid} from "@mui/material";
 import {alignProperty} from "@mui/material/styles/cssUtils";
+import TaskList from "../component/TaskList";
 
 const Tasks = () => {
-
     const [taskList, setTaskList] = useState<Array<Task>>(tasks);
 
-    const taskDoneHandle = (task: Task) => {
-        console.log("Changing state of reactive variable")
+    useEffect(() => {
+        fetchData();
+    }, [])
+    const fetchData = async () => {
+        const baseUrl = import.meta.env.BASE_URL;
+
+        const result = await (fetch(baseUrl));
+        const data = await result.json() as Array<Task>;
+        const transfered: Task[] = data.map(t => {
+            const { creationDate, updateDate, ...rest} = t;
+            return {
+                creationDate: new Date(creationDate),
+                updateDate: new Date(updateDate),
+                ...rest
+            } as Task
+        });
+    };
 
 
-        setTaskList([...taskList]);
-    }
-
-    return <div>
-        <h1>Active tasks</h1>
-        <Grid container spacing={0} direction="column" alignItems="center" justifySelf="center">
-            {taskList.filter(t => !t.done)
-                .map(t =>
-                    <TaskCard key={t.id} task={t} onTaskDone={taskDoneHandle}/>
-                )}
-        </Grid>
-        <h1>Completed tasks</h1>
-        <Grid container spacing={0} direction="column" alignItems="center" justifySelf="center">
-            {taskList.filter(t => t.done)
-                .map(t =>
-                    <TaskCard key={t.id} task={t} onTaskDone={taskDoneHandle}/>
-                )}
-        </Grid>
-    </div>
+    return <TaskList tasks={taskList}></TaskList>
 }
 
 export default Tasks;

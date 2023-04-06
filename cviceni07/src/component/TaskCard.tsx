@@ -19,14 +19,14 @@ import {deepOrange, lightBlue} from "@mui/material/colors";
 interface Props {
     task: Task
 
-    onTaskDone: (task: Task) => void
+   // onTaskDone: (task: Task) => void
 }
 
-const TaskCard = ({task, onTaskDone}: Props) => {
+const TaskCard = ({task}: Props) => { //onTaskDone
     const doneClickHandle = (e: React.ChangeEvent<HTMLInputElement>) => {
 
         task.done = e.target.checked;
-        onTaskDone(task);
+       // onTaskDone(task);
         console.table(task);
     }
 
